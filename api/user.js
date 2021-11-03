@@ -19,8 +19,8 @@ const addUser = async (req, res) => {
 
 // get all users
 const getAllUser = async (req, res) => {
-  const allUsers = await User.find({});
-  res.status(StatusCodes.OK).json(allUsers);
+  const allUsers = await User.find({}).select("-password");
+  res.status(StatusCodes.OK).json({ total: allUsers.length, allUsers });
 };
 
 module.exports = { addUser, getAllUser };

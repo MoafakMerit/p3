@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const loginRout = require("./routes/login");
 const userRout = require("./routes/user");
 const repairRequestRout = require("./routes/repair-request");
+const orderRout = require("./routes/order");
 const winston = require("winston");
 const middlewareErrorHandler = require("./middleware/middleware-error-handler");
 require("dotenv").config();
@@ -17,6 +18,7 @@ winston.add(new winston.transports.File({ filename: "errorlog.log" }));
 app.use("/login", loginRout);
 app.use("/api/users", userRout);
 app.use("/api/repair-requests", repairRequestRout);
+app.use("/api/orders", orderRout);
 
 app.use(middlewareErrorHandler);
 

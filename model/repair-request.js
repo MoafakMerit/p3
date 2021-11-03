@@ -8,6 +8,7 @@ const repairRequestSchema = new mongoose.Schema({
   detail: String,
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  status: { type: String, enum: ["recived", "process", "finished"] },
 });
 
 const RepairRequest = mongoose.model("Repair Request", repairRequestSchema);

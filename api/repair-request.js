@@ -26,17 +26,17 @@ const getARepairRequests = async (req, res) => {
 const getAllRepairRequests = async (req, res) => {
   const allRepairRequests = await RepairRequest.find({}).populate(
     "customer createdBy",
-    "name -_id"
+    "name status -_id"
   );
-  res.status(StatusCodes.OK).json(allRepairRequests);
+  res
+    .status(StatusCodes.OK)
+    .json({ Total: allRepairRequests.length, allRepairRequests });
 };
 
 // update request
 
 const updateRequest = async (req, res) => {
   const { id } = req.params;
-  const { text, updatedBy, updateDate } = req.body;
-  console.log(id);
   const updatedRequest = await RepairRequest.findByIdAndUpdate(
     { _id: id },
     { ...req.body },
@@ -45,9 +45,38 @@ const updateRequest = async (req, res) => {
   res.status(StatusCodes.OK).json(updatedRequest);
 };
 
+// update all request
+
+const updateAllRequest = async (req, res) => {
+  const updatedAllRequest = await RepairRequest.updateMany(
+    {},
+    { ...req.body },
+    { new: true, strict: false }
+  );
+  res.status(StatusCodes.OK).json(updatedAllRequest);
+};
+
+// filter request
+const getARepairRequestByFilter = async (req, res) => {
+  const { status, createDate } = req.query;
+  let filterObject = {};
+
+  if (status) {
+    filterObject.status = status;
+  }
+  if (createDate) {
+    filterObject.createDate = createDate;
+  }
+
+  const result = await RepairRequest.find(filterObject);
+  res.status(StatusCodes.OK).json({ Total: result.length, result });
+};
+
 module.exports = {
   addRepairRequest,
-  getAllRepairRequests,
   getARepairRequests,
+  getAllRepairRequests,
   updateRequest,
+  updateAllRequest,
+  getARepairRequestByFilter,
 };
