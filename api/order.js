@@ -22,7 +22,7 @@ const getAllorders = async (req, res) => {
 
 // filter orders
 const getAorderByFilter = async (req, res) => {
-  const { price, nummericFilter } = req.query;
+  const { price, nummericFilter, page } = req.query;
   let filterObject = {};
 
   if (price) {
@@ -30,17 +30,37 @@ const getAorderByFilter = async (req, res) => {
   }
 
   if (nummericFilter) {
-    const nMap = {
+    const operatorMap = {
       ">": "$gt",
       "<": "$lt",
       "=>": "$egt",
       "=<": "$elt",
       "=": "$eq",
     };
-    console.log(nummericFilter);
+
+    const regEx = /\b(<|>|=>|<|>=|=)\b/g;
+
+    let filter = nummericFilter.replace(
+      regEx,
+      (match) => `-${operatorMap[match]}-`
+    );
+    const options = ["price"];
+    filter = filter.split(",").forEach((element) => {
+      const [field, operator, value] = element.split("-");
+      if (options.includes(field)) {
+        filterObject[field] = { [operator]: value };
+      }
+    });
+    console.log(filterObject);
   }
 
-  const result = await Order.find(filterObject);
+  if (page) {
+    var limitPerPage = 2;
+    var skip = (page - 1) * limitPerPage || limitPerPage;
+    console.log(skip);
+  }
+
+  const result = await Order.find(filterObject).skip(skip);
   res.status(StatusCodes.OK).json({ Total: result.length, result });
 };
 
