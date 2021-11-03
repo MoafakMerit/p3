@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const UserSchema = mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   name: String,
   password: String,
   email: { type: String, uniqe: true },
@@ -19,6 +19,6 @@ UserSchema.methods.createJWT = function () {
   return jwt.sign({ id: this.id, role: this.role }, process.env.JWT_SECRET);
 };
 
-const User = mongoose.model("user", UserSchema);
+const User = mongoose.model("User", UserSchema);
 
 module.exports = User;
